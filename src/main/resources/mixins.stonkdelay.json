@@ -1,0 +1,11 @@
+{
+  "package": "com.stonkdelay.mixin",
+  "refmap": "mixins.stonkdelay.refmap.json",
+  "minVersion": "0.7",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "MixinPlayerControllerMP",
+    "MixinWorldClient",
+    "MixinNetHandlerPlayClient",
+  ]
+}
