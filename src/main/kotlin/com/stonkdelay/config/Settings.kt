@@ -7,20 +7,17 @@ import java.io.File
 
 
 
-class Config(val config: File) {
+class Config(private val config: File) {
     var settings: Settings = Settings()
 
     fun load() {
         if (!config.exists()) {
             config.createNewFile()
-        } else {
-            val text = config.readText()
-            try {
-                settings = Json.decodeFromString<Settings>(text)
-            } catch (e: Exception) {
-
-            }
+            return
         }
+        settings = config.runCatching {
+            Json.decodeFromString<Settings>(this.readText())
+        }.getOrNull() ?: Settings()
     }
 
     fun save() {

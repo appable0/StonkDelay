@@ -71,18 +71,15 @@ object Delay {
         }
     }
 
-    // Queue blocks when player right-clicks on adjacent block faces.
+    // Stops tracking blocks when player right-clicks on adjacent block faces.
     @SubscribeEvent
     fun onPlayerInteract(event: PlayerInteractEvent) {
         if (!Location.inSkyblock
             || !StonkDelay.config.settings.enabled
             || event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK
         ) return
-        val affectedPos = event.pos.offset(event.face)
-        blocks[affectedPos]?.let {
-            it.queued = true
-            blocks.remove(affectedPos)
-        }
+        val affectedPos = event.pos.offset(event.face) ?: return
+        blocks.remove(affectedPos)
     }
 
     // Resets block list when world changes.
