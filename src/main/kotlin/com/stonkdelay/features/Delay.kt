@@ -30,6 +30,7 @@ object Delay {
     fun onBlockChange(event: BlockChangeEvent) {
         if (!Location.inSkyblock || !StonkDelay.config.settings.enabled) return
         blocks[event.pos]?.let {
+            it.state = event.state
             it.queued = true
             event.isCanceled = true
         }
@@ -88,5 +89,5 @@ object Delay {
         blocks.clear()
     }
 
-    data class BlockData(val state: IBlockState, val time: Long, var queued: Boolean)
+    data class BlockData(var state: IBlockState, val time: Long, var queued: Boolean)
 }
