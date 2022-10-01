@@ -7,5 +7,6 @@
     "MixinPlayerControllerMP",
     "MixinWorldClient",
     "MixinNetHandlerPlayClient",
+    "MixinFMLHandshakeMessageModList"
   ]
 }

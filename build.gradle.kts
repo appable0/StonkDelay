@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "StonkDelay"
-version = "0.1.1"
+version = "0.1.2"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))
@@ -22,7 +22,6 @@ kotlin {
 }
 
 loom {
-    log4jConfigs.from(file("log4j2.xml"))
     launchConfigs {
         "client" {
             property("mixin.debug", "true")

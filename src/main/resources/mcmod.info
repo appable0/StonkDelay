@@ -3,7 +3,7 @@
 	"modid": "stonkdelay",
 	"name": "StonkDelay",
 	"description": "Delays mined blocks resetting in Hypixel Skyblock.",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"mcversion": "1.8.9",
 	"url": "",
 	"updateUrl": "",
