@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "StonkDelay"
-version = "0.1.2"
+version = "0.1.3"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))
@@ -58,10 +58,8 @@ dependencies {
     mappings("de.oceanlabs.mcp:mcp_stable:22-1.8.9")
     forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
 
-    shadowImpl("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
-        isTransitive = false
-    }
-    annotationProcessor("org.spongepowered:mixin:0.8.4-SNAPSHOT")
+    implementation("org.spongepowered:mixin:0.8.5")
+    annotationProcessor("org.spongepowered:mixin:0.8.5")
 
     runtimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 
