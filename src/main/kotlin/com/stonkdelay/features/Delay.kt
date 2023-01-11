@@ -89,5 +89,12 @@ object Delay {
         blocks.clear()
     }
 
+    fun resetAll() {
+        blocks.forEach { (pos, data) ->
+            mc.theWorld.setBlockState(pos, data.state)
+        }
+        blocks.clear()
+    }
+
     data class BlockData(var state: IBlockState, val time: Long, var queued: Boolean)
 }

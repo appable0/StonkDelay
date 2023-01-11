@@ -1,6 +1,7 @@
 package com.stonkdelay.commands
 
 import com.stonkdelay.StonkDelay
+import com.stonkdelay.features.Delay
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 import net.minecraft.util.ChatComponentText
@@ -17,7 +18,7 @@ class DelayCommand : CommandBase() {
     }
 
     override fun getCommandUsage(sender: ICommandSender?): String {
-        return "/$commandName <delay in milliseconds>"
+        return "/$commandName <delay in milliseconds|reset>"
     }
 
     override fun getRequiredPermissionLevel(): Int {
@@ -34,6 +35,11 @@ class DelayCommand : CommandBase() {
                 "§cStonkDelay disabled."
             }))
         } else if (args.size == 1) {
+            if (args[0] == "reset" || args[0] == "rs") {
+                Delay.resetAll()
+                sender.addChatMessage(ChatComponentText("§aMade all blocks reappear"))
+                return
+            }
             try {
                 val delay = args[0].toInt()
                 StonkDelay.config.settings.delay = delay
