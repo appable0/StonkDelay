@@ -47,6 +47,8 @@ object Delay {
 
         blocks.forEach {
             if (it.key.x in minX..maxX && it.key.z in minZ..maxZ) {
+                it.value.state = mc.theWorld.getBlockState(it.key)
+                it.value.queued = true
                 mc.theWorld.setBlockState(it.key, Blocks.air.defaultState)
             }
         }
