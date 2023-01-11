@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "StonkDelay"
-version = "0.1.3"
+version = "1.0"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))

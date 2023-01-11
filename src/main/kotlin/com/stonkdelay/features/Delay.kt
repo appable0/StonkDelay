@@ -68,7 +68,7 @@ object Delay {
             if (shouldResetBlock) {
                 mc.theWorld.setBlockState(it, blockData.state)
             }
-            shouldResetBlock || (timeExisted >= 10000)
+            shouldResetBlock || (timeExisted >= 60000)
         }
     }
 

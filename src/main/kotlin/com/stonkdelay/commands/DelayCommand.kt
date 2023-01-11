@@ -4,7 +4,9 @@ import com.stonkdelay.StonkDelay
 import com.stonkdelay.features.Delay
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
+import net.minecraft.event.ClickEvent
 import net.minecraft.util.ChatComponentText
+import net.minecraft.util.ChatStyle
 
 class DelayCommand : CommandBase() {
     override fun getCommandName(): String {
@@ -45,6 +47,15 @@ class DelayCommand : CommandBase() {
                 StonkDelay.config.settings.delay = delay
                 StonkDelay.config.save()
                 sender.addChatMessage(ChatComponentText("§aDelay set to $delay ms."))
+                if (!StonkDelay.config.settings.enabled) {
+                    sender.addChatMessage(ChatComponentText("§e§lWarning: §bStonkDelay is currently disabled. ")
+                        .appendSibling(ChatComponentText("§7[§a§lENABLE§7]").setChatStyle(
+                            ChatStyle().setChatClickEvent(
+                                ClickEvent(ClickEvent.Action.RUN_COMMAND, "/stonkdelay")
+                            )
+                        ))
+                    )
+                }
             } catch (e: NumberFormatException) {
                 sender.addChatMessage(ChatComponentText("§cNot a valid delay!"))
             }

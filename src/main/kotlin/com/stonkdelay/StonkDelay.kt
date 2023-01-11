@@ -45,6 +45,6 @@ class StonkDelay {
         lateinit var config: Config
         const val MOD_ID = "stonkdelay"
         const val MOD_NAME = "StonkDelay"
-        const val MOD_VERSION = "0.1.3"
+        const val MOD_VERSION = "1.0"
     }
 }
