@@ -1,34 +1,54 @@
 package com.stonkdelay.features
 
-import com.stonkdelay.BlockBreakEvent
-import com.stonkdelay.BlockChangeEvent
-import com.stonkdelay.ChunkUpdateEvent
-import com.stonkdelay.StonkDelay
+import com.stonkdelay.*
 import com.stonkdelay.StonkDelay.Companion.mc
 import com.stonkdelay.utils.Location
 import net.minecraft.block.state.IBlockState
 import net.minecraft.init.Blocks
+import net.minecraft.item.ItemBlock
 import net.minecraft.util.BlockPos
+import net.minecraft.util.ChatComponentText
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.event.world.WorldEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
+import sun.jvm.hotspot.opto.Block
 
 object Delay {
     private val blocks = mutableMapOf<BlockPos, BlockData>()
 
+    // Add chests to block map
+    @SubscribeEvent
+    fun onBlockPlace(event: BlockPlaceEvent) {
+        if (!isChestEnabled()) return
+        val block = event.stack?.item as? ItemBlock ?: return
+        if (block.block != Blocks.chest || blocks.containsKey(event.pos)) return
+        val state = mc.theWorld.getBlockState(event.pos)
+        blocks[event.pos] = BlockData(
+            state,
+            System.currentTimeMillis(),
+            queued = false,
+            placed = true
+        )
+    }
+
     // Adds mined block to block map
     @SubscribeEvent
     fun onBlockBreak(event: BlockBreakEvent) {
-        if (!Location.inSkyblock || !StonkDelay.config.settings.enabled) return
+        if (!isEnabled()) return
         val state = mc.theWorld.getBlockState(event.pos)
-        blocks[event.pos] = BlockData(state, System.currentTimeMillis(), false)
+        blocks[event.pos] = BlockData(
+            state,
+            System.currentTimeMillis(),
+            queued = false,
+            placed = false
+        )
     }
 
     // Queues and cancels blocks changed from PacketBlockChange and PacketMultiBlockChange
     @SubscribeEvent
     fun onBlockChange(event: BlockChangeEvent) {
-        if (!Location.inSkyblock || !StonkDelay.config.settings.enabled) return
+        if (!isEnabled()) return
         blocks[event.pos]?.let {
             it.state = event.state
             it.queued = true
@@ -39,7 +59,7 @@ object Delay {
     // Cancel block changes from PacketChunkData
     @SubscribeEvent
     fun onChunkUpdate(event: ChunkUpdateEvent) {
-        if (!Location.inSkyblock || !StonkDelay.config.settings.enabled) return
+        if (!isEnabled()) return
         val minX = event.packet.chunkX shl 4
         val minZ = event.packet.chunkZ shl 4
         val maxX = minX + 15
@@ -57,10 +77,7 @@ object Delay {
     // Resets expired queued blocks
     @SubscribeEvent
     fun onTick(event: TickEvent) {
-        if (!Location.inSkyblock
-            || !StonkDelay.config.settings.enabled
-            || event.phase != TickEvent.Phase.START
-        ) return
+        if (!isEnabled() || event.phase != TickEvent.Phase.START) return
         val currentTime = System.currentTimeMillis()
         blocks.keys.removeAll {
             val blockData = blocks[it]!!
@@ -77,17 +94,16 @@ object Delay {
     // Stops tracking blocks when player right-clicks on adjacent block faces.
     @SubscribeEvent
     fun onPlayerInteract(event: PlayerInteractEvent) {
-        if (!Location.inSkyblock
-            || !StonkDelay.config.settings.enabled
-            || event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK
-        ) return
+        if (!isEnabled() || event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return
         val affectedPos = event.pos.offset(event.face) ?: return
-        blocks.remove(affectedPos)
+        if (blocks[affectedPos]?.placed == false) {
+            blocks.remove(affectedPos)
+        }
     }
 
     // Resets block list when world changes.
     @SubscribeEvent
-    fun onWorldUnload(event: WorldEvent.Unload) {
+    fun onWorldUnload(ignored: WorldEvent.Unload) {
         blocks.clear()
     }
 
@@ -98,5 +114,8 @@ object Delay {
         blocks.clear()
     }
 
-    data class BlockData(var state: IBlockState, val time: Long, var queued: Boolean)
+    private fun isEnabled() = Location.inSkyblock && StonkDelay.config.settings.enabled
+    private fun isChestEnabled() = isEnabled() && StonkDelay.config.settings.chestEnabled
+
+    data class BlockData(var state: IBlockState, val time: Long, var queued: Boolean, var placed: Boolean)
 }

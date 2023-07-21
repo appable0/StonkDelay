@@ -37,27 +37,37 @@ class DelayCommand : CommandBase() {
                 "§cStonkDelay disabled."
             }))
         } else if (args.size == 1) {
-            if (args[0] == "reset" || args[0] == "rs") {
-                Delay.resetAll()
-                sender.addChatMessage(ChatComponentText("§aMade all blocks reappear"))
-                return
-            }
-            try {
-                val delay = args[0].toInt()
-                StonkDelay.config.settings.delay = delay
-                StonkDelay.config.save()
-                sender.addChatMessage(ChatComponentText("§aDelay set to $delay ms."))
-                if (!StonkDelay.config.settings.enabled) {
-                    sender.addChatMessage(ChatComponentText("§e§lWarning: §bStonkDelay is currently disabled. ")
-                        .appendSibling(ChatComponentText("§7[§a§lENABLE§7]").setChatStyle(
-                            ChatStyle().setChatClickEvent(
-                                ClickEvent(ClickEvent.Action.RUN_COMMAND, "/stonkdelay")
-                            )
-                        ))
-                    )
+            when (val arg = args[0]) {
+                "reset", "rs" -> {
+                    Delay.resetAll()
+                    sender.addChatMessage(ChatComponentText("§aMade all blocks reappear"))
                 }
-            } catch (e: NumberFormatException) {
-                sender.addChatMessage(ChatComponentText("§cNot a valid delay!"))
+                "chest" -> {
+                    StonkDelay.config.settings.chestEnabled = !StonkDelay.config.settings.chestEnabled
+                    StonkDelay.config.save()
+                    sender.addChatMessage(ChatComponentText(if (StonkDelay.config.settings.chestEnabled) {
+                        "§aStonkDelay enabled for chests. (delay: §b${StonkDelay.config.settings.delay} §ams)"
+                    } else {
+                        "§cStonkDelay disabled for chests."
+                    }))
+                }
+                else -> try {
+                    val delay = arg.toInt()
+                    StonkDelay.config.settings.delay = delay
+                    StonkDelay.config.save()
+                    sender.addChatMessage(ChatComponentText("§aDelay set to $delay ms."))
+                    if (!StonkDelay.config.settings.enabled) {
+                        sender.addChatMessage(ChatComponentText("§e§lWarning: §bStonkDelay is currently disabled. ")
+                            .appendSibling(ChatComponentText("§7[§a§lENABLE§7]").setChatStyle(
+                                ChatStyle().setChatClickEvent(
+                                    ClickEvent(ClickEvent.Action.RUN_COMMAND, "/stonkdelay")
+                                )
+                            ))
+                        )
+                    }
+                } catch (e: NumberFormatException) {
+                    sender.addChatMessage(ChatComponentText("§cNot a valid delay!"))
+                }
             }
         }
     }

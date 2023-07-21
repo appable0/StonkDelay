@@ -26,5 +26,9 @@ class Config(private val config: File) {
     }
 
     @Serializable
-    data class Settings(var enabled: Boolean = false, var delay: Int = 0)
+    data class Settings(
+        var enabled: Boolean = false,
+        var delay: Int = 0,
+        var chestEnabled: Boolean = false
+    )
 }
